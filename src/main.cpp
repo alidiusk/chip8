@@ -57,16 +57,16 @@ bool handle_input(Chip8& chip8) {
         if (e.type == SDL_KEYDOWN) {
             switch (e.key.keysym.sym) {
                 case SDLK_1:
-                    chip8.keys[0] = 1;
-                    break;
-                case SDLK_2:
                     chip8.keys[1] = 1;
                     break;
-                case SDLK_3:
+                case SDLK_2:
                     chip8.keys[2] = 1;
                     break;
-                case SDLK_4:
+                case SDLK_3:
                     chip8.keys[3] = 1;
+                    break;
+                case SDLK_4:
+                    chip8.keys[12] = 1;
                     break;
                 case SDLK_q:
                     chip8.keys[4] = 1;
@@ -78,28 +78,28 @@ bool handle_input(Chip8& chip8) {
                     chip8.keys[6] = 1;
                     break;
                 case SDLK_r:
-                    chip8.keys[7] = 1;
-                    break;
-                case SDLK_a:
-                    chip8.keys[8] = 1;
-                    break;
-                case SDLK_s:
-                    chip8.keys[9] = 1;
-                    break;
-                case SDLK_d:
-                    chip8.keys[10] = 1;
-                    break;
-                case SDLK_f:
-                    chip8.keys[11] = 1;
-                    break;
-                case SDLK_z:
-                    chip8.keys[12] = 1;
-                    break;
-                case SDLK_x:
                     chip8.keys[13] = 1;
                     break;
-                case SDLK_c:
+                case SDLK_a:
+                    chip8.keys[7] = 1;
+                    break;
+                case SDLK_s:
+                    chip8.keys[8] = 1;
+                    break;
+                case SDLK_d:
+                    chip8.keys[9] = 1;
+                    break;
+                case SDLK_f:
                     chip8.keys[14] = 1;
+                    break;
+                case SDLK_z:
+                    chip8.keys[10] = 1;
+                    break;
+                case SDLK_x:
+                    chip8.keys[0] = 1;
+                    break;
+                case SDLK_c:
+                    chip8.keys[11] = 1;
                     break;
                 case SDLK_v:
                     chip8.keys[15] = 1;
@@ -110,16 +110,16 @@ bool handle_input(Chip8& chip8) {
         if (e.type == SDL_KEYUP) {
             switch (e.key.keysym.sym) {
                 case SDLK_1:
-                    chip8.keys[0] = 0;
-                    break;
-                case SDLK_2:
                     chip8.keys[1] = 0;
                     break;
-                case SDLK_3:
+                case SDLK_2:
                     chip8.keys[2] = 0;
                     break;
-                case SDLK_4:
+                case SDLK_3:
                     chip8.keys[3] = 0;
+                    break;
+                case SDLK_4:
+                    chip8.keys[12] = 0;
                     break;
                 case SDLK_q:
                     chip8.keys[4] = 0;
@@ -131,28 +131,28 @@ bool handle_input(Chip8& chip8) {
                     chip8.keys[6] = 0;
                     break;
                 case SDLK_r:
-                    chip8.keys[7] = 0;
-                    break;
-                case SDLK_a:
-                    chip8.keys[8] = 0;
-                    break;
-                case SDLK_s:
-                    chip8.keys[9] = 0;
-                    break;
-                case SDLK_d:
-                    chip8.keys[10] = 0;
-                    break;
-                case SDLK_f:
-                    chip8.keys[11] = 0;
-                    break;
-                case SDLK_z:
-                    chip8.keys[12] = 0;
-                    break;
-                case SDLK_x:
                     chip8.keys[13] = 0;
                     break;
-                case SDLK_c:
+                case SDLK_a:
+                    chip8.keys[7] = 0;
+                    break;
+                case SDLK_s:
+                    chip8.keys[8] = 0;
+                    break;
+                case SDLK_d:
+                    chip8.keys[9] = 0;
+                    break;
+                case SDLK_f:
                     chip8.keys[14] = 0;
+                    break;
+                case SDLK_z:
+                    chip8.keys[10] = 0;
+                    break;
+                case SDLK_x:
+                    chip8.keys[0] = 0;
+                    break;
+                case SDLK_c:
+                    chip8.keys[11] = 0;
                     break;
                 case SDLK_v:
                     chip8.keys[15] = 0;
@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
         quit = handle_input(chip8);
 
         unsigned long end = SDL_GetPerformanceCounter();
-        float elapsed_ms = (end - start) / static_cast<float>(SDL_GetPerformanceFrequency()) * 1000.0f;
+        float elapsed_ms = static_cast<float>(end - start) / static_cast<float>(SDL_GetPerformanceFrequency()) * 1000.0f;
         // Cap to 60 FPS
         SDL_Delay(static_cast<unsigned int>(floor(16.666f - elapsed_ms)));
     }

@@ -59,7 +59,7 @@ void Chip8::load_program(std::string path) {
 }
 
 void Chip8::emulate_cycle() {
-    // printf("PC: %x\tOpcode: %04x\n", pc, (memory[pc] << 8) | memory[pc + 1]);
+    printf("PC: %04x\tOpcode: %04x\n", pc, (memory[pc] << 8) | memory[pc + 1]);
     handle_opcode();
 
     if (delay_timer > 0)
@@ -293,6 +293,7 @@ void Chip8::handle_opcode_D(unsigned short opcode) {
     unsigned short start_col = regs[X];
     unsigned short start_row = regs[Y];
 
+    regs[15] = 0;
     for (unsigned short i = 0; i < N; i++) {
         unsigned short mem_value = memory[I + i];
         unsigned short row = start_row + i;
@@ -300,11 +301,12 @@ void Chip8::handle_opcode_D(unsigned short opcode) {
         for (unsigned short j = 0; j < 8; j++) {
             unsigned short col = start_col + j;
             unsigned short pixel = (mem_value & (0x80 >> j)) >> (7 - j);
-            unsigned short gfx_value = gfx[col + row * 64];
+            unsigned short gfx_index = (col % 64) + (row % 32) * 64;
+            unsigned short gfx_value = gfx[gfx_index];
             unsigned short xored = gfx_value ^ pixel;
 
-            regs[15] |= gfx_value && !xored;
-            gfx[col + row * 64] = static_cast<unsigned char>(xored);
+            regs[15] |= gfx_value && pixel;
+            gfx[gfx_index] = static_cast<unsigned char>(xored);
         }
     }
 }
@@ -335,18 +337,20 @@ void Chip8::handle_opcode_F(unsigned short opcode) {
         case 0x0A: {
             // Wait for key press, then store in Vx
             // BLOCKING OPERATION
-            std::array<unsigned char, 16> cur_keys = keys;
+
             bool key_pressed = false;
 
-            while (!key_pressed) {
-                for (unsigned long i = 0; i < keys.size(); i++) {
-                    if (keys[i] != 0 && keys[i] != cur_keys[i]) {
-                        regs[X] = static_cast<unsigned char>(i);
-                        key_pressed = true;
-                        break;
-                    }
+            for (unsigned long i = 0; i < keys.size(); i++) {
+                if (keys[i] != 0) {
+                    regs[X] = static_cast<unsigned char>(i);
+                    key_pressed = true;
+                    break;
                 }
             }
+
+            // Rerun instruction until key is pressed
+            if (!key_pressed)
+                pc -= 2;
 
             break;
         }
